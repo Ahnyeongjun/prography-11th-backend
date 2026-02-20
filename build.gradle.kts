@@ -30,15 +30,18 @@ dependencies {
     runtimeOnly("com.h2database:h2")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testImplementation("org.mockito.kotlin:mockito-kotlin:5.4.0")
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
 kotlin {
     compilerOptions {
         freeCompilerArgs.addAll("-Xjsr305=strict", "-Xannotation-default-target=param-property")
     }
+}
+
+// Workaround: Gradle test worker fails with non-ASCII characters in project path on Windows
+if (projectDir.absolutePath.any { it.code > 127 }) {
+    layout.buildDirectory = file(System.getProperty("java.io.tmpdir") + "/prography-build")
 }
 
 tasks.withType<Test> {
